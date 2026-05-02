@@ -435,6 +435,38 @@ export const maplayerCommonLayout = {
 	"symbol-triangle_white": {
 		"icon-image": "triangle_white",
 	},
+	"symbol-cross_bold": {
+		"icon-image": "cross_bold",
+		"icon-size": [
+			"interpolate",
+			["linear"],
+			["zoom"],
+			9,
+			0.45,
+			12,
+			0.55,
+			16,
+			0.75,
+			22,
+			0.95,
+		],
+	},
+	"symbol-cross_normal": {
+		"icon-image": "cross_normal",
+		"icon-size": [
+			"interpolate",
+			["linear"],
+			["zoom"],
+			9,
+			0.42,
+			12,
+			0.52,
+			16,
+			0.7,
+			22,
+			0.9,
+		],
+	},
 	"symbol-youbike_elec": {
 		"icon-image": "youbike_elec",
 	},

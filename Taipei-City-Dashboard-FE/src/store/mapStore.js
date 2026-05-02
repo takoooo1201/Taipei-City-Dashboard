@@ -308,6 +308,8 @@ export const useMapStore = defineStore("map", {
 				"bike_orange",
 				"bike_red",
 				"cctv",
+				"cross_bold",
+				"cross_normal",
 				"live",
 				"youbike_elec",
 			];
