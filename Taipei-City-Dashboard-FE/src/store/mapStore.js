@@ -310,6 +310,8 @@ export const useMapStore = defineStore("map", {
 				"cctv",
 				"live",
 				"youbike_elec",
+				"cross_bold",
+				"cross_normal",
 			];
 			images.forEach((element) => {
 				this.map.loadImage(
@@ -2393,17 +2395,17 @@ export const useMapStore = defineStore("map", {
 			}
 			map_configs.map((map_config) => {
 				let mapLayerId = `${map_config.index}-${map_config.type}-${map_config.city}`;
-				if (map_config.title !== xParam) {
+				if (map_config.title === xParam) {
 					this.map.setLayoutProperty(
 						mapLayerId,
 						"visibility",
-						"none",
+						"visible",
 					);
 				} else {
 					this.map.setLayoutProperty(
 						mapLayerId,
 						"visibility",
-						"visible",
+						"none",
 					);
 				}
 			});

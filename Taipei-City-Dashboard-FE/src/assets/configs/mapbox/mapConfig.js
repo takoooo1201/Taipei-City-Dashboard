@@ -438,6 +438,34 @@ export const maplayerCommonLayout = {
 	"symbol-youbike_elec": {
 		"icon-image": "youbike_elec",
 	},
+	"symbol-cross_bold": {
+		"icon-image": "cross_bold",
+		"icon-size": [
+			"interpolate",
+			["linear"],
+			["zoom"],
+			11.99,
+			0.4,
+			14,
+			0.7,
+			22,
+			1,
+		],
+	},
+	"symbol-cross_normal": {
+		"icon-image": "cross_normal",
+		"icon-size": [
+			"interpolate",
+			["linear"],
+			["zoom"],
+			11.99,
+			0.4,
+			14,
+			0.7,
+			22,
+			1,
+		],
+	},
 	"symbol-youbike": {
 		"icon-image": [
 			"case",
