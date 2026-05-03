@@ -139,11 +139,13 @@ onMounted(() => {
 
 			<button
 				class="mapcontainer-layers-incident"
+				:class="{ 'is-disabled': dialogStore.dialogs.login }"
 				title="民眾食安通報"
 				@click="dialogStore.showDialog('incidentReport')"
+				:disabled="dialogStore.dialogs.login"
 			>
-        !
-      </button><!-- The key prop informs vue that the component should be updated when switching dashboards -->
+			  !
+			</button><!-- The key prop informs vue that the component should be updated when switching dashboards -->
       <MobileLayers :key="contentStore.currentDashboard.index" />
       <IncidentReport />
       <FindClosestPoint />
@@ -343,8 +345,9 @@ onMounted(() => {
 
 		&-incident {
 			position: absolute;
-			right: 10px;
-			bottom: 60px;
+			left: 10px;
+			top: 10px;
+			z-index: 1; /* keep below dialogs (dialogcontainer z-index:10) */
 			width: 50px;
 			height: 50px;
 			border-radius: 50%;
@@ -357,6 +360,13 @@ onMounted(() => {
 
 			&:hover {
 				background-color: var(--color-highlight);
+			}
+
+			&.is-disabled {
+				opacity: 0.7;
+				pointer-events: none;
+				background-color: var(--color-component-background);
+				color: var(--color-complement-text);
 			}
 		}
 	}
