@@ -3,6 +3,26 @@ import { defineStore } from 'pinia'
 import http from "../router/axios";
 
 export const useChatStore = defineStore('chat', () => {
+	const componentDataTool = {
+		type: "function",
+		function: {
+			name: "get_component_data",
+			description: "查詢台北城市儀表板組件的圖表、歷史或原始資料列",
+			parameters: {
+				type: "object",
+				properties: {
+					component_id: { type: "integer" },
+					city: { type: "string", enum: ["taipei", "metrotaipei"] },
+					data_kind: { type: "string", enum: ["chart", "history", "raw"] },
+					time_from: { type: "string" },
+					time_to: { type: "string" },
+					limit: { type: "integer", minimum: 1, maximum: 70 },
+				},
+				required: ["component_id", "city", "data_kind"],
+			},
+		},
+	};
+
   	// 預設訊息
   	const defaultChatData = [
     	{
@@ -46,11 +66,15 @@ export const useChatStore = defineStore('chat', () => {
 			String(d.getDate()).padStart(2, "0");
 	};
 
-	const requestTWCCAnswer = async (question, componentContext = "") => {
-		const response = await http.post("/ai/chat/twcc", {
+	const requestTWCCAnswer = async (question, componentContext = "", components = []) => {
+		const payload = {
 			session: getSessionId(),
 			stream: false,
 			messages: [
+				{
+					role: "system",
+					content: "When get_component_data is available and the user asks for exact values, row-level details, rankings, newest records, or comparisons inside a listed component, use the tool first. Do not guess from the summary context.",
+				},
 				{
 					role: "system",
 					content:
@@ -69,11 +93,18 @@ export const useChatStore = defineStore('chat', () => {
 				},
 			],
 			max_new_tokens: 700,
-			temperature: 0.1,
+			temperature: 0.2,
 			top_k: 50,
 			top_p: 0.9,
 			frequence_penalty: 1.05,
-		});
+		};
+
+		if (components.length > 0) {
+			payload.tools = [componentDataTool];
+			payload.tool_choice = "auto";
+		}
+
+		const response = await http.post("/ai/chat/twcc", payload);
 
 		return response.data?.data?.content;
 	};
@@ -135,13 +166,13 @@ export const useChatStore = defineStore('chat', () => {
 
 			// 2. 準備 Context 餵給 AI
 			const componentContext = components.length > 0 
-				? `\n\n【目前系統檢索到的相關組件列表】：\n${components.map((c, i) => `${i+1}. ${c.name} (${c.city === 'taipei' ? '臺北市' : '新北市'})`).join('\n')}`
+				? `\n\n【目前系統檢索到的相關組件列表】：\n${components.map((c, i) => `${i+1}. id=${c.id}, index=${c.index}, name=${c.name}, city=${c.city} (${c.city === 'taipei' ? '臺北市' : '新北市'})`).join('\n')}`
 				: "\n\n【目前系統未在資料庫中檢索到直接相關的組件】。";
 
 			// 3. 請求 AI 回答
 			let aiContent = "";
 			try {
-				aiContent = await requestTWCCAnswer(newChatData.content, componentContext);
+				aiContent = await requestTWCCAnswer(newChatData.content, componentContext, components);
 			} catch (err) {
 				console.error("TWCCChatError :", err);
 			}

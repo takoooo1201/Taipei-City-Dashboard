@@ -17,6 +17,7 @@ func init() {
 	// Register demo tools
 	Register("get_current_time", GetCurrentTime)
 	Register("get_population_summary", GetPopulationSummary)
+	Register("get_component_data", GetComponentData)
 }
 
 // Register adds a tool to the registry
