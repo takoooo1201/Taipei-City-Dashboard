@@ -343,8 +343,9 @@ onMounted(() => {
 
 		&-incident {
 			position: absolute;
-			right: 10px;
-			bottom: 60px;
+			left: 10px;
+			top: 10px;
+			z-index: 30;
 			width: 50px;
 			height: 50px;
 			border-radius: 50%;
