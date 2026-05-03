@@ -183,13 +183,25 @@ async function handleSubmit() {
     distance: foundLocation.value?.distance || 0.5,
     status: "pending",
   };
-  await http.post("/incident/public/", payload);
+  const response = await http.post("/incident/public/", payload);
   incidentType.value = "suspected-food-poisoning";
 	incidentDesc.value = "";
   incidentDis.value = 0.5;
-  await mapStore.fetchIncidents();
   dialogStore.showNotification("success", "食安通報已送出");
 	dialogStore.hideAllDialogs();
+  mapStore.tempMarkerCoordinates = null;
+  foundLocation.value = null;
+
+  try {
+    await mapStore.fetchIncidents();
+  } catch (error) {
+    console.error("Failed to refresh incident markers:", error);
+    const incident = response.data?.data;
+    if (incident && mapStore.map) {
+      mapStore.incidents = [incident, ...mapStore.incidents];
+      mapStore.renderIncidents();
+    }
+  }
 }
 
 onMounted(() => {

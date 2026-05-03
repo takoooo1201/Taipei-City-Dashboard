@@ -314,6 +314,8 @@ export const useMapStore = defineStore("map", {
 				"cctv",
 				"live",
 				"youbike_elec",
+				"cross_bold",
+				"cross_normal",
 			];
 			images.forEach((element) => {
 				this.map.loadImage(
@@ -2465,19 +2467,27 @@ export const useMapStore = defineStore("map", {
 			if (!this.map || dialogStore.dialogs.moreInfo) {
 				return;
 			}
+			const selectedLayer =
+				typeof xParam === "string" ? xParam.trim() : xParam;
+			const showAllLayers =
+				selectedLayer === "全部" ||
+				String(selectedLayer).toLowerCase() === "all";
 			map_configs.map((map_config) => {
 				let mapLayerId = `${map_config.index}-${map_config.type}-${map_config.city}`;
-				if (map_config.title !== xParam) {
-					this.map.setLayoutProperty(
-						mapLayerId,
-						"visibility",
-						"none",
-					);
+				if (!this.map.getLayer(mapLayerId)) {
+					return;
+				}
+				const shouldShow =
+					showAllLayers || map_config.title?.trim() === selectedLayer;
+				if (shouldShow) {
+					this.map.setLayoutProperty(mapLayerId, "visibility", "visible");
+					if (!this.currentVisibleLayers.includes(mapLayerId)) {
+						this.currentVisibleLayers.push(mapLayerId);
+					}
 				} else {
-					this.map.setLayoutProperty(
-						mapLayerId,
-						"visibility",
-						"visible",
+					this.map.setLayoutProperty(mapLayerId, "visibility", "none");
+					this.currentVisibleLayers = this.currentVisibleLayers.filter(
+						(element) => element !== mapLayerId,
 					);
 				}
 			});
@@ -2507,7 +2517,13 @@ export const useMapStore = defineStore("map", {
 			}
 			map_configs.map((map_config) => {
 				let mapLayerId = `${map_config.index}-${map_config.type}-${map_config.city}`;
+				if (!this.map.getLayer(mapLayerId)) {
+					return;
+				}
 				this.map.setLayoutProperty(mapLayerId, "visibility", "visible");
+				if (!this.currentVisibleLayers.includes(mapLayerId)) {
+					this.currentVisibleLayers.push(mapLayerId);
+				}
 			});
 		},
 
